@@ -39,9 +39,7 @@ describe ::RegParsec::StateAttributes do
     example { subject.x = 1; subject.commit!; subject.backdate!; subject.refresh!; subject.x == 0  }
     
     example { subject.merge!(:x => 1); subject.x == 1 }
-    example { subject.merge!(:x => 1); subject.refresh!; subject.x == 1 }
-    example { subject.merge!(:x => 1); subject.backdate!; subject.x == 1 }
-    example { subject.merge!(:x => 1); subject.backdate!; subject.refresh!; subject.x == 0 }
+    example { subject.merge!(:x => 1); subject.refresh!; subject.x == 0 }
   end
 
   context "Destructive change and Refresh" do

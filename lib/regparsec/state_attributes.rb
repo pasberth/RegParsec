@@ -35,7 +35,6 @@ class RegParsec::StateAttributes
   
   def checkout! commit
     @head = Hash[*commit.map { |key, val| [key, (val.clone rescue val)] }.flatten(1)]
-    true
   end
 
   def backdate!
@@ -52,7 +51,7 @@ class RegParsec::StateAttributes
   end
   
   def merge! commit
-    commit! merge commit
+    checkout! merge commit
   end
 
   protected
