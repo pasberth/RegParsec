@@ -25,7 +25,7 @@ class RegParsec::Regparsers::ApplyParser < RegParsec::Regparsers::Base
 end
 
 module RegParsec::Regparseable
-  def apply *regparsers, &proc_as_regparser
-    ::RegParsers::Regparsers::ApplyParser.new.curry!(*regparsers, &proc_as_regparser)
+  def apply *regparsers, &result_proc
+    ::RegParsers::Regparsers::ApplyParser.new.curry!(*regparsers, &result_proc)
   end
 end

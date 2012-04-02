@@ -21,7 +21,11 @@ module RegParsec::Regparseable
   def __parse__ input, *args
     case result = regparse(input)
     when ::RegParsec::Result::Success
-      result.return_value
+      if result_procs.empty?
+        result.return_value
+      else
+        result_procs[0].call result.return_value
+      end
     else
       nil
     end
@@ -35,13 +39,17 @@ module RegParsec::Regparseable
     @_curried_args ||= []
   end
   
+  def result_procs
+    @_result_proc ||= []
+  end
+  
   def curry *args, &block
     clone.curry! *args, &block
   end
   
-  def curry! *args, &block
+  def curry! *args, &result_proc
     args.each &:push.to(curried_args)
-    block and curried_args << block
+    result_procs << result_proc if result_procs.empty? and result_proc
     self
   end
 end
