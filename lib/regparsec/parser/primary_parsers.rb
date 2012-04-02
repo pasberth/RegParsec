@@ -3,11 +3,15 @@ require 'regparsec/regparsers'
 class String
   
   def to_regparser
-    ::RegParsec::Regparsers::StringParser.new.curry!(self)
+    ::RegParsec::Regparsers::StringParser.well_defined_parser_get(self)
   end
 end
 
 class RegParsec::Regparsers::StringParser < RegParsec::Regparsers::Base
+  
+  def self.well_defined_parser_get str
+    (@_well_defined_parsers ||= {})[str] ||= new.curry!(str)
+  end
   
   def format_args expecting, *args
     [expecting, *args]
