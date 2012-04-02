@@ -17,11 +17,11 @@ class RegParsec::Regparsers::StringParser < RegParsec::Regparsers::Base
     [expecting, *args]
   end
 
-  def __regparse__ input, expecting
-    if input[0, expecting.length] == expecting
+  def __regparse__ state, expecting
+    if state.input[0, expecting.length] == expecting
       Result::Success.new( :return_value => expecting, :matching_string => expecting )
-    elsif expecting[0, input.length] == input
-      Result::Accepted.new( :return_value => input, :matching_string => input )
+    elsif expecting[0, state.input.length] == state.input
+      Result::Accepted.new( :return_value => state.input, :matching_string => state.input )
     else
       Result::Invalid.new( :return_value => nil )
     end

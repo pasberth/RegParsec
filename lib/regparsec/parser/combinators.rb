@@ -1,8 +1,8 @@
 class RegParsec::Regparsers::ApplyParser < RegParsec::Regparsers::Base
 
-  def __regparse__ input, *regparsers
+  def __regparse__ state, *regparsers
     consumed = ''
-    unread = input.clone
+    unread = state.input
     list = []
     regparsers.each do |regp|
       result = regp.regparse(unread)

@@ -10,7 +10,7 @@ class RegParsec::RegularObject < RegParsec::Regparsers::Base
     @regparsers << try_convert_into_regparser!(regparser)
   end
 
-  def __regparse__ string
-    return apply( *@regparsers ).regparse string
+  def __regparse__ state
+    return apply( *@regparsers ).regparse state
   end
 end

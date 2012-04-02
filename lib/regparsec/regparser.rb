@@ -9,11 +9,13 @@ class RegParsec::Regparser
     @regparser = ::RegParsec::RegparserHelpers.try_convert_into_regparser!(regparser)
   end
 
-  def __regparse__ input
+  def __regparse__ state
     consumed = ''
-    case input
+    case state.input
     when String
-      input = StringIO.new(input)
+      input = StringIO.new(state.input)
+    else
+      input = state.input
     end
     
     return_value = [].tap do |list|

@@ -10,16 +10,24 @@ module RegParsec::Regparseable
     DEFINE
   end
   
-  def regparse input
-    __regparse__ input, *format_args(*curried_args)
+  def regparse state
+    case state
+    when String
+      state = ::RegParsec::StateAttributes.new :input => state
+    end
+    __regparse__ state, *format_args(*curried_args)
   end
   
-  def parse input
-    __parse__ input, *format_args(*curried_args)
+  def parse state
+    case state
+    when String
+      state = ::RegParsec::StateAttributes.new :input => state
+    end
+    __parse__ state, *format_args(*curried_args)
   end
 
-  def __parse__ input, *args
-    case result = regparse(input)
+  def __parse__ state, *args
+    case result = regparse(state)
     when ::RegParsec::Result::Success
       if result_procs.empty?
         result.return_value

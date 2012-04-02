@@ -3,7 +3,6 @@ require 'give4each'
 module RegParsec
   
   require 'regparsec/state_attributes'
-  require 'regparsec/using_regparsers'
   require 'regparsec/result'
   require 'regparsec/regparser_helpers'
   require 'regparsec/regparseable'
