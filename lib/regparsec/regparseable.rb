@@ -28,7 +28,7 @@ module RegParsec::Regparseable
   end
 
   def format_args *args
-    args.map &:try_convert_into_regparser.in(::RegParsec::RegparserHelpers)
+    args.map &:try_convert_into_regparser!.in(::RegParsec::RegparserHelpers)
   end
 
   def curried_args
