@@ -9,7 +9,7 @@ module RegParsec::Regparseable
       end
     DEFINE
   end
-  
+
   def regparse state
     __regparse__ ::RegParsec::RegparserHelpers.build_state_attributes(state), *format_args(*curried_args)
   end

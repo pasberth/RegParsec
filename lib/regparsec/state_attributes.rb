@@ -1,5 +1,16 @@
 require 'regparsec'
 
+module RegParsec::StateAttributesHelpers
+  
+  def try_convert_into_state_attributes! attributes
+    case attributes
+    when ::RegParsec::StateAttributes then attributes
+    when ::Hash then ::RegParsec::StateAttributes.new(attributes)
+    else raise TypeError, "Can't convert #{attributes.class} into RegParsec::StateAttributes"
+    end
+  end
+end
+
 class RegParsec::StateAttributes
   
   def initialize attributes={}
@@ -39,9 +50,32 @@ class RegParsec::StateAttributes
     commits << commit
     refresh!
   end
+  
+  def merge! commit
+    commit! merge commit
+  end
+
+  protected
+  
+    def head
+      @head
+    end
+    
+    def updated_commit
+      commits.last
+    end
 
   private
+
     def commits
       @commits ||= []
+    end
+
+    def merge commit
+      commit = case commit
+               when ::RegParsec::StateAttributes then commit.updated_commit
+               when Hash then commit
+               end
+      @head.merge(commit)
     end
 end
