@@ -16,7 +16,7 @@ class RegParsec::Regparser
       input = StringIO.new(input)
     end
     
-    Result::Success.new( :return_value => [].tap do |list|
+    return_value = [].tap do |list|
       buf = ""
       while line = input.gets or !buf.empty?
         buf << line if line
@@ -25,10 +25,16 @@ class RegParsec::Regparser
           buf = buf.sub(result.matching_string, '')
           consumed << result.matching_string
           list << result.return_value
-        when Result::Accepted then next
+        when Result::Accepted then line ? next : break
         when Result::Invalid then break
         end
       end
-    end, :matching_string => consumed )
+    end
+    
+    if return_value.empty?
+      Result::Invalid.new
+    else
+      Result::Success.new :return_value => return_value, :matching_string => consumed
+    end
   end
 end
