@@ -11,4 +11,12 @@ module RegParsec::RegparserHelpers
       raise TypeError, "Can't convert #{regobj.class} into Regparser"
     end
   end
+  
+  def build_state_attributes state
+    case state
+    when ::RegParsec::StateAttributes then state
+    when String then ::RegParsec::StateAttributes.new :input => state
+    when Hash then ::RegParsec::StateAttributes.new state
+    end
+  end
 end

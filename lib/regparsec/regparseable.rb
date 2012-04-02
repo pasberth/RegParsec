@@ -11,19 +11,11 @@ module RegParsec::Regparseable
   end
   
   def regparse state
-    case state
-    when String
-      state = ::RegParsec::StateAttributes.new :input => state
-    end
-    __regparse__ state, *format_args(*curried_args)
+    __regparse__ ::RegParsec::RegparserHelpers.build_state_attributes(state), *format_args(*curried_args)
   end
   
   def parse state
-    case state
-    when String
-      state = ::RegParsec::StateAttributes.new :input => state
-    end
-    __parse__ state, *format_args(*curried_args)
+    __parse__ ::RegParsec::RegparserHelpers.build_state_attributes(state), *format_args(*curried_args)
   end
 
   def __parse__ state, *args
