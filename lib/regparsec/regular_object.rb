@@ -10,24 +10,15 @@ class RegParsec::RegularObject < RegParsec::Regparsers::Base
   def concat regparser
     @regparsers << try_convert_into_regparser!(regparser)
   end
-  
-  def __parse__ string
-    case result = regparse(string)
-    when Result::Success
-      result.matching_string
-    else
-      nil
-    end
-  end
 
   def __regparse__ string
-    consumed = ''
+    consumed = ""
     unread = string.clone
     @regparsers.each do |regp|
       result = regp.regparse(unread)
       case result
       when Result::Success
-        consumed += result.matching_string
+        consumed << result.matching_string
         unread = string.sub(result.matching_string, '')
       when Result::Accespted
         return result
@@ -36,6 +27,6 @@ class RegParsec::RegularObject < RegParsec::Regparsers::Base
       end
     end
     
-    Result::Success.new( :matching_string => consumed )
+    Result::Success.new( :return_value => consumed, :matching_string => consumed)
   end
 end

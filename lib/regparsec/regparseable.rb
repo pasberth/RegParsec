@@ -18,6 +18,15 @@ module RegParsec::Regparseable
     __parse__ input, *format_args(*curried_args)
   end
 
+  def __parse__ input, *args
+    case result = regparse(input)
+    when ::RegParsec::Result::Success
+      result.return_value
+    else
+      nil
+    end
+  end
+
   def format_args *args
     args.map &:try_convert_into_regparser.in(::RegParsec::RegparserHelpers)
   end

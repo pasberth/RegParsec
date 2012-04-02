@@ -12,6 +12,7 @@ module RegParsec::RegparserDelegator
   
   [ :__regparse__, :regparse,
     :__parse__, :parse,
+    :format_args, :curried_args,
     :curry, :curry!
   ].each do |method|
     class_eval(<<-DEFINE)
