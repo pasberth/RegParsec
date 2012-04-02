@@ -23,21 +23,3 @@ class RegParsec::Regparsers::StringParser < RegParsec::Regparsers::Base
     end
   end
 end
-
-class Proc
-  
-  def to_regparser
-    ::RegParsec::Regparsers::ProcParser.new.curry!(self)
-  end
-end
-
-class RegParsec::Regparsers::ProcParser < RegParsec::Regparsers::Base
-  
-  def format_args proc_as_regparser, *args
-    [proc_as_regparser, *args] #, *args.map(&:try_convert_into_regparser.in(::RegParsec::RegparserHelpers)))]
-  end
-
-  def __regparse__ input, proc_as_regparser #, *regparsers
-    instance_exec input, &proc_as_regparser
-  end
-end
