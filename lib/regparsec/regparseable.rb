@@ -52,4 +52,8 @@ module RegParsec::Regparseable
     result_procs << result_proc if result_procs.empty? and result_proc
     self
   end
+  
+  def to_regparser
+    self
+  end
 end

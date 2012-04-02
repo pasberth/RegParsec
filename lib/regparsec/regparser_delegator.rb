@@ -1,24 +1,39 @@
 require 'regparsec'
 
-module RegParsec::RegparserDelegator
+module RegParsec::RegparserDelegatable
+  
+  include ::RegParsec::Regparseable
 
   def regular_object
-    @_regparser_regobj ||= __build_regparser__
+    @_regparser_regobj ||= ::RegParsec::RegparserHelpers.try_convert_into_regparser!(__build_regparser__)
   end
   
   def __build_regparser__
     raise NotImplementedError, "need to define `__build_regparser__'"
   end
   
-  [ :__regparse__, :regparse,
-    :__parse__, :parse,
-    :format_args, :curried_args,
-    :curry, :curry!
-  ].each do |method|
-    class_eval(<<-DEFINE)
-      def #{method}(*args, &block)               # def __regparse__(*args, &block)
-        regular_object.#{method}(*args, &block)  #   regular_object.__regparse__(*args, &block)
-      end                                        # end
-    DEFINE
+  def format_args *args
+    args
+  end
+  
+  def __regparse__ *args, &block
+    regular_object.regparse *args, &block
+  end
+  
+  def __parse__ *args, &block
+    regular_object.parse *args, &block
+  end
+end
+
+class RegParsec::RegparserDelegator
+
+  include ::RegParsec::RegparserDelegatable
+  
+  def initialize regparser
+    @_regparser_regobj = ::RegParsec::RegparserHelpers.try_convert_into_regparser!(regparser)
+  end
+  
+  def __build_regparser__
+    @_regparser_regobj
   end
 end

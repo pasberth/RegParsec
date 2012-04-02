@@ -29,6 +29,6 @@ class RegParsec::Regparser
         when Result::Invalid then break
         end
       end
-    end, matching_string: consumed )
+    end, :matching_string => consumed )
   end
 end

@@ -26,6 +26,6 @@ end
 
 module RegParsec::Regparseable
   def apply *regparsers, &result_proc
-    ::RegParsers::Regparsers::ApplyParser.new.curry!(*regparsers, &result_proc)
+    ::RegParsec::Regparsers::ApplyParser.new.curry!(*regparsers, &result_proc)
   end
 end
