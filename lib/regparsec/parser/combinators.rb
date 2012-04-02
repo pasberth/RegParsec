@@ -1,8 +1,8 @@
 class RegParsec::Regparsers::ApplyParser < RegParsec::Regparsers::Base
 
-  def __regparse__ string, *regparsers
+  def __regparse__ input, *regparsers
     consumed = ''
-    unread = string.clone
+    unread = input.clone
     list = []
     regparsers.each do |regp|
       result = regp.regparse(unread)
@@ -10,7 +10,7 @@ class RegParsec::Regparsers::ApplyParser < RegParsec::Regparsers::Base
       when Result::Success
         consumed << result.matching_string
         list << result.return_value
-        unread = string.sub(result.matching_string, '')
+        unread.sub!(result.matching_string, '')
       when Result::Accepted
         consumed << result.matching_string
         list << result.return_value
