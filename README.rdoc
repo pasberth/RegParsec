@@ -8,3 +8,15 @@ This be development version yet.
   $ cd RegParsec
   $ gem build regparsec.gemspec
   $ gem install regparsec-0.1.0.gem
+  
+== Try RegParsec
+
+$ irb
+
+  require 'regparsec'
+  # => true 
+  StringParser = RegParsec::Regparsers.between('"', '"', /(?:(?:\\\")|[^"])*/)
+  StringParser.parse('"this is a string"')
+  # => #<MatchData "this is a string"> 
+  StringParser.parse('"can escape the \" !"')
+  # => #<MatchData "can escape the \\\" !"> 
