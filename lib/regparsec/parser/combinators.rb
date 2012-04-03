@@ -10,7 +10,7 @@ module RegParsec::Regparsers
     module_eval(<<-DEF)
       def #{method}(*args, &result_hook)
         regparser = ::RegParsec::Regparsers::#{klass}.new.curry!(*args)
-        regparser.result_hook(&result_hook) if result_hook
+        regparser.result_hook!(&result_hook) if result_hook
         regparser
       end
     DEF

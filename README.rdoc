@@ -11,7 +11,7 @@ This be development version yet.
   
 == Try RegParsec
 
-$ irb
+  $ irb
 
   require 'regparsec'
   # => true 
@@ -20,3 +20,9 @@ $ irb
   # => #<MatchData "this is a string"> 
   StringParser.parse('"can escape the \" !"')
   # => #<MatchData "can escape the \\\" !"> 
+
+== Result hook
+
+  StringParser = RegParsec::Regparsers.between('"', '"', /(?:(?:\\\")|[^"])*/) { |match_data, state| "Result: " + match_data[0] }
+  StringParser.parse('"Success!"')
+  # => "Result: Success!" 

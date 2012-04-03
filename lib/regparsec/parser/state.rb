@@ -2,8 +2,10 @@ require 'regparsec/regparsers'
 
 module RegParsec::Regparsers
 
-  def update_state *regparsers, &result_proc
-    ::RegParsec::Regparsers::UpdateStateParser.new.curry!(*regparsers, &result_proc)
+  def update_state *regparsers, &result_hook
+    regparser = ::RegParsec::Regparsers::UpdateStateParser.new.curry!(*regparsers)
+    regparser.result_hook! &result_hook if result_hook
+    regparser
   end
 end
 
