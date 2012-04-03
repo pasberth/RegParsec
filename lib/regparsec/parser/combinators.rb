@@ -16,6 +16,10 @@ module RegParsec::Regparseable
     ::RegParsec::Regparsers::Many1Parser.new.curry!(*regparsers, &result_proc)
   end
   
+  def between *regparsers, &result_proc
+    ::RegParsec::Regparsers::BetweenParser.new.curry!(*regparsers, &result_proc)
+  end
+  
   def one_of *regparsers, &result_proc
     ::RegParsec::Regparsers::OneOfParser.new.curry!(*regparsers, &result_proc)
   end
@@ -100,6 +104,20 @@ class Many1Parser < Base
       end
     when Result::Accepted then result
     else result
+    end
+  end
+end
+
+class BetweenParser < Base
+  
+  def __regparse__ state, open, close, body
+    case result = apply(open, body, close).regparse(state)
+    when Result::Success
+      Result::Success.new( :return_value => result.return_value[1], :matching_string => result.matching_string )
+    when Result::Accepted
+      Result::Accepted.new( :return_value => result.return_value[1], :matching_string => result.matching_string )
+    else
+      result
     end
   end
 end

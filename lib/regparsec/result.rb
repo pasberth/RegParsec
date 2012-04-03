@@ -11,7 +11,7 @@ class RegParsec::Result
   end
   
   def == other
-    @information_keys.all? do |key|
+    self.class == other.class and @information_keys.all? do |key|
       send(key) == other.send(key)
     end
   rescue NoMethodError
