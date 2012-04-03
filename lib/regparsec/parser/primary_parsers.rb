@@ -7,6 +7,13 @@ class String
   end
 end
 
+class Regexp
+  
+  def to_regparser
+    ::RegParsec::Regparsers::RegexpParser.well_defined_parser_get(self)
+  end
+end
+
 class RegParsec::Regparsers::StringParser < RegParsec::Regparsers::Base
   
   def self.well_defined_parser_get str
@@ -23,6 +30,36 @@ class RegParsec::Regparsers::StringParser < RegParsec::Regparsers::Base
       Result::Success.new( :return_value => expecting, :matching_string => expecting )
     elsif expecting[0, state.input.length] == state.input
       Result::Accepted.new( :return_value => state.input, :matching_string => state.input )
+    else
+      Result::Invalid.new( :return_value => nil )
+    end
+  end
+end
+
+class RegParsec::Regparsers::RegexpParser < RegParsec::Regparsers::Base
+  
+  def self.well_defined_parser_get regexp
+    (@_well_defined_parsers ||= {})[regexp] ||= new.curry!(regexp)
+  end
+  
+  def format_args expecting, *args
+    [expecting, *args]
+  end
+
+  def __regparse__ state, regexp
+    case state.input                                       # case "abc;def;"
+    when /\A#{regexp}\z/                                   # when /\A(.*?);\z/
+      md = $~; md.string =~ /\A#{regexp}/                  #   "abc;def;" =~ /\A(.*?);/
+      if $~[0] != md.string                                #   if "abc;" != "abc;def;"
+        md = $~
+        state.input.sub!(md.string, '')
+        Result::Success.new( :return_value => md,
+                             :matching_string => md.string )
+      else
+        Result::Accepted.new( :return_value => md, :matching_string => md.string )
+      end
+    when /\A#{regexp}/
+      Result::Success.new( :return_value => $~, :matching_string => $~.string )
     else
       Result::Invalid.new( :return_value => nil )
     end
