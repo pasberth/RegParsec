@@ -1,5 +1,12 @@
 require 'regparsec/regparsers'
 
+module RegParsec::Regparseable
+
+  def update_state *regparsers, &result_proc
+    ::RegParsec::Regparsers::UpdateStateParser.new.curry!(*regparsers, &result_proc)
+  end
+end
+
 class RegParsec::Regparsers::UpdateStateParser < RegParsec::Regparsers::Base
   
   def format_args *args
