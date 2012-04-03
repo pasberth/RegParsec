@@ -1,0 +1,10 @@
+= RegParsec
+
+This be development version yet.
+
+== Installation
+
+  $ git clone git@github.com:pasberth/RegParsec.git
+  $ cd RegParsec
+  $ gem build regparsec.gemspec
+  $ gem install regparsec-0.1.0.gem
