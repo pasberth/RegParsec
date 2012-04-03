@@ -1,5 +1,3 @@
-require 'regparsec'
-
 module RegParsec::StateAttributesHelpers
   
   def try_convert_into_state_attributes! attributes

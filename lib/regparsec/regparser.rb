@@ -19,12 +19,13 @@ class RegParsec::Regparser
     end
     
     return_value = [].tap do |list|
-      buf = ""
-      while line = input.gets or !buf.empty?
-        buf << line if line
-        case result = @regparser.regparse(buf)
+      state.input = ""
+      state.commit!
+      while line = input.gets or !state.input.empty?
+        state.input << line if line
+        case result = @regparser.regparse(state)
         when Result::Success then
-          buf = buf.sub(result.matching_string, '')
+          state.commit!
           consumed << result.matching_string
           list << result.return_value
         when Result::Accepted then line ? next : break

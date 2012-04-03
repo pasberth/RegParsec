@@ -19,6 +19,7 @@ class RegParsec::Regparsers::StringParser < RegParsec::Regparsers::Base
 
   def __regparse__ state, expecting
     if state.input[0, expecting.length] == expecting
+      state.input.sub!(expecting, '')
       Result::Success.new( :return_value => expecting, :matching_string => expecting )
     elsif expecting[0, state.input.length] == state.input
       Result::Accepted.new( :return_value => state.input, :matching_string => state.input )
