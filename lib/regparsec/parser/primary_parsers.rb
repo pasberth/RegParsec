@@ -49,21 +49,21 @@ class RegParsec::Regparsers::RegexpParser < RegParsec::Regparsers::Base
   def __regparse__ state, regexp
     case state.input                                       # case "abc;def;"
     when /\A#{regexp}\z/                                   # when /\A(.*?);\z/
-      md = $~; md.string =~ /\A#{regexp}/                  #   "abc;def;" =~ /\A(.*?);/
-      if $~[0] != md.string                                #   if "abc;" != "abc;def;"
+      md = $~; md[0] =~ /\A#{regexp}/                  #   "abc;def;" =~ /\A(.*?);/
+      if $~[0] != md[0]                                    #   if "abc;" != "abc;def;"
         md = $~
-        state.input.sub!(md.string, '')
+        state.input.sub!(md[0], '')
         Result::Success.new( :return_value => md,
-                             :matching_string => md.string )
+                             :matching_string => md[0] )
       else
         Result::Accepted.new( :return_value => md,
-                              :matching_string => md.string )
+                              :matching_string => md[0] )
       end
     when /\A#{regexp}/
       md = $~
-      state.input.sub!(md.string, '')
+      state.input.sub!(md[0], '')
       Result::Success.new( :return_value => md,
-                           :matching_string => md.string )
+                           :matching_string => md[0] )
     else
       Result::Invalid.new( :return_value => nil )
     end

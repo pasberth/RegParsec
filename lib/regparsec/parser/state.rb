@@ -1,6 +1,6 @@
 require 'regparsec/regparsers'
 
-module RegParsec::Regparseable
+module RegParsec::Regparsers
 
   def update_state *regparsers, &result_proc
     ::RegParsec::Regparsers::UpdateStateParser.new.curry!(*regparsers, &result_proc)

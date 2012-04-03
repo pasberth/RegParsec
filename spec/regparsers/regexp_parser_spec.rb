@@ -14,6 +14,30 @@ describe RegParsec::Regparsers::RegexpParser do
     example { subject.regparse("abc;def;").should be_is_a ::RegParsec::Result::Success }
   end
   
+  context ' /./ case ' do
+    subject { described_class.new.curry!(/./) }
+
+    example { subject.parse("a").should be_nil }
+    example { subject.regparse("a").should be_is_a ::RegParsec::Result::Accepted }
+    example { subject.parse("ab")[0].should == "a" }
+    example { subject.regparse("ab").should be_is_a ::RegParsec::Result::Success }
+    example { subject.parse("").should be_nil }
+    example { subject.regparse("").should be_is_a ::RegParsec::Result::Invalid }
+  end
+  
+  context ' /.*/ case ' do
+    subject { described_class.new.curry!(/.*/) }
+
+    example { subject.parse("abc").should be_nil }
+    example { subject.regparse("abc").should be_is_a ::RegParsec::Result::Accepted }
+    example { subject.parse("abc\n")[0].should == "abc" }
+    example { subject.regparse("abc\n").should be_is_a ::RegParsec::Result::Success }
+    example { subject.parse("abc\ndef")[0].should == "abc" }
+    example { subject.regparse("abc\ndef").should be_is_a ::RegParsec::Result::Success }
+    example { subject.parse("abc\ndef\n")[0].should == "abc" }
+    example { subject.regparse("abc\ndef\n").should be_is_a ::RegParsec::Result::Success }
+  end
+  
   context ' /#(.*)\n/ case ' do
     subject { described_class.new.curry!(/\#(.*?)\n/) }
 

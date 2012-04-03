@@ -1,7 +1,7 @@
 require 'regparsec'
 
 module RegParsec::Regparseable
-
+  
   [ :regparse, :parse ].each do |method|
     class_eval(<<-DEFINE)
       def __#{method}__(*args, &block)

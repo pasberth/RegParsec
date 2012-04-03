@@ -1,4 +1,4 @@
-module RegParsec::Regparseable
+module RegParsec::Regparsers
 
   def try *regparsers, &result_proc
     ::RegParsec::Regparsers::TryParser.new.curry!(*regparsers, &result_proc)
