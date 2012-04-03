@@ -56,10 +56,14 @@ class RegParsec::Regparsers::RegexpParser < RegParsec::Regparsers::Base
         Result::Success.new( :return_value => md,
                              :matching_string => md.string )
       else
-        Result::Accepted.new( :return_value => md, :matching_string => md.string )
+        Result::Accepted.new( :return_value => md,
+                              :matching_string => md.string )
       end
     when /\A#{regexp}/
-      Result::Success.new( :return_value => $~, :matching_string => $~.string )
+      md = $~
+      state.input.sub!(md.string, '')
+      Result::Success.new( :return_value => md,
+                           :matching_string => md.string )
     else
       Result::Invalid.new( :return_value => nil )
     end
