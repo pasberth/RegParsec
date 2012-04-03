@@ -14,6 +14,13 @@ class Regexp
   end
 end
 
+class Proc
+  
+  def to_regparser
+    ::RegParsec::Regparsers::ProcParser.new.curry!(self)
+  end
+end
+
 class RegParsec::Regparsers::StringParser < RegParsec::Regparsers::Base
   
   def self.well_defined_parser_get str
@@ -49,7 +56,7 @@ class RegParsec::Regparsers::RegexpParser < RegParsec::Regparsers::Base
   def __regparse__ state, regexp
     case state.input                                       # case "abc;def;"
     when /\A#{regexp}\z/                                   # when /\A(.*?);\z/
-      md = $~; md[0] =~ /\A#{regexp}/                  #   "abc;def;" =~ /\A(.*?);/
+      md = $~; md[0] =~ /\A#{regexp}/                      #   "abc;def;" =~ /\A(.*?);/
       if $~[0] != md[0]                                    #   if "abc;" != "abc;def;"
         md = $~
         state.input.sub!(md[0], '')
@@ -67,5 +74,16 @@ class RegParsec::Regparsers::RegexpParser < RegParsec::Regparsers::Base
     else
       Result::Invalid.new( :return_value => nil )
     end
+  end
+end
+
+class RegParsec::Regparsers::ProcParser < RegParsec::Regparsers::Base
+  
+  def format_args proc, *args
+    [proc, *args]
+  end
+
+  def __regparse__ state, proc
+    try_convert_into_regparser!( proc.call(state) ).regparse( state )
   end
 end

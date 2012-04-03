@@ -35,10 +35,6 @@ module RegParsec::Regparseable
   def format_args *args
     args.map &:try_convert_into_regparser!.in(::RegParsec::RegparserHelpers)
   end
-
-  def curried_args
-    @_curried_args ||= []
-  end
   
   def result_hook &block
     clone.result_hook! &block
@@ -46,14 +42,6 @@ module RegParsec::Regparseable
 
   def result_hook! &hook
     result_hooks << hook || raise(ArgumentError, "tried to put a result hook without a block.")
-  end
-
-  def result_hooks
-    @_result_hooks ||= []
-  end
-  
-  def curry *args, &block
-    clone.curry! *args, &block
   end
   
   def curry! *args, &block
@@ -63,7 +51,36 @@ module RegParsec::Regparseable
     self
   end
   
+  def curry *args, &block
+    clone.curry! *args, &block
+  end
+  
+  def clone
+    cln = super
+    cln.curried_args = curried_args.clone
+    cln.result_hooks = result_hooks.clone
+    cln
+  end
+  
   def to_regparser
     self
   end
+
+  protected
+
+    def curried_args= a
+      @_curried_args = a
+    end
+
+    def curried_args
+      @_curried_args ||= []
+    end
+  
+    def result_hooks= a
+      @_result_hooks = a
+    end
+
+    def result_hooks
+      @_result_hooks ||= []
+    end
 end
