@@ -1,27 +1,19 @@
 module RegParsec::Regparsers
 
-  def try *regparsers, &result_proc
-    ::RegParsec::Regparsers::TryParser.new.curry!(*regparsers, &result_proc)
-  end
-  
-  def apply *regparsers, &result_proc
-    ::RegParsec::Regparsers::ApplyParser.new.curry!(*regparsers, &result_proc)
-  end
-
-  def many *regparsers, &result_proc
-    ::RegParsec::Regparsers::ManyParser.new.curry!(*regparsers, &result_proc)
-  end
-  
-  def many1 *regparsers, &result_proc
-    ::RegParsec::Regparsers::Many1Parser.new.curry!(*regparsers, &result_proc)
-  end
-  
-  def between *regparsers, &result_proc
-    ::RegParsec::Regparsers::BetweenParser.new.curry!(*regparsers, &result_proc)
-  end
-  
-  def one_of *regparsers, &result_proc
-    ::RegParsec::Regparsers::OneOfParser.new.curry!(*regparsers, &result_proc)
+  [ [:try, :TryParser],
+    [:apply, :ApplyParser],
+    [:many, :ManyParser],
+    [:many1, :Many1Parser],
+    [:between, :BetweenParser],
+    [:one_of, :OneOfParser]
+  ].each do |method, klass|
+    module_eval(<<-DEF)
+      def #{method}(*args, &result_hook)
+        regparser = ::RegParsec::Regparsers::#{klass}.new.curry!(*args)
+        regparser.result_hook(&result_hook) if result_hook
+        regparser
+      end
+    DEF
   end
 end
 

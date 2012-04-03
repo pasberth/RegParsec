@@ -11,7 +11,12 @@ module RegParsec::Regparseable
   end
 
   def regparse state
-    __regparse__ ::RegParsec::RegparserHelpers.build_state_attributes(state), *format_args(*curried_args)
+    result = __regparse__ ::RegParsec::RegparserHelpers.build_state_attributes(state), *format_args(*curried_args)
+    case result
+    when ::RegParsec::Result::Success
+      result.return_value = result_hooks.inject(result.return_value) { |r, hook| hook.call(state, r) }
+    end
+    result
   end
   
   def parse state
@@ -21,11 +26,8 @@ module RegParsec::Regparseable
   def __parse__ state, *args
     case result = regparse(state)
     when ::RegParsec::Result::Success
-      if result_procs.empty?
-        result.return_value
-      else
-        result_procs[0].call result.return_value
-      end
+      result.return_value
+      #result_hooks.inject(result.return_value) { |r, hook| hook.call(state, r) }
     else
       nil
     end
@@ -39,17 +41,22 @@ module RegParsec::Regparseable
     @_curried_args ||= []
   end
   
-  def result_procs
-    @_result_proc ||= []
+  def result_hook &hook
+    result_hooks << hook || raise(ArgumentError, "tried to put a result hook without a block.")
+  end
+
+  def result_hooks
+    @_result_hooks ||= []
   end
   
   def curry *args, &block
     clone.curry! *args, &block
   end
   
-  def curry! *args, &result_proc
+  def curry! *args, &block
     args.each &:push.to(curried_args)
-    result_procs << result_proc if result_procs.empty? and result_proc
+    # TODO: How will using to the block
+    # result_procs << result_proc if result_procs.empty? and result_proc
     self
   end
   
