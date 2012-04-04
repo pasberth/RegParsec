@@ -33,7 +33,6 @@ class RegParsec::Regparser
           state.commit!
           consumed << result.matching_string
           list << result.return_value
-          break
         when Result::Accepted then line ? next : break
         when Result::Invalid then break
         end

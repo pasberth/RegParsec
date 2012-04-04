@@ -13,7 +13,7 @@ module RegParsec::Regparseable
   def regparse state
     result = __regparse__ ::RegParsec::RegparserHelpers.build_state_attributes(state), *format_args(*curried_args)
     case result
-    when ::RegParsec::Result::Success
+    when ::RegParsec::Result::Success, ::RegParsec::Result::Valid
       result.return_value = result_hooks.inject(result.return_value) { |r, hook| hook.call(r) }
     end
     result

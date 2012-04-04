@@ -69,9 +69,7 @@ class ManyParser < Base
           consumed << result.matching_string
           list << result.return_value
         when Result::Accepted then
-          consumed << result.matching_string
-          list << result.return_value
-          return Result::Accepted.new( :return_value => list, :matching_string => consumed )
+          return Result::Valid.new( :return_value => list, :matching_string => consumed )
         when Result::Invalid then
           break
         end
@@ -85,15 +83,18 @@ end
 class Many1Parser < Base
   
   def __regparse__ state, doing
-    case result = many(doing).regparse(state)
+    case head = try(doing).regparse(state)
+    when Result::Invalid then head
+    when Result::Accepted then head
     when Result::Success, Result::Valid
-      if result.return_value.empty?
-        Result::Invalid.new
-      else
-        result
+      case result = many(doing).regparse(state)
+      when Result::Success
+        Result::Success.new( :return_value => [head.return_value, *result.return_value], :matching_string => head.matching_string + result.matching_string )
+      when Result::Valid
+        Result::Valid.new( :return_value => [head.return_value, *result.return_value], :matching_string => head.matching_string + result.matching_string )
+    # when Result::Accepted
+    # when Result::Invalid
       end
-    when Result::Accepted then result
-    else result
     end
   end
 end
