@@ -24,11 +24,10 @@ class TryParser < Base
   def __regparse__ state, doing
     commit = state.commit!
     case result = doing.regparse(state)
-    when Result::Success
+    when Result::Success, Result::Valid
       state.commit!
       result
     else
-      state.commit! commit
       result
     end
   end
@@ -117,12 +116,14 @@ end
 class OneOfParser < Base
   
   def __regparse__ state, *choices
+    accepted = nil
     choices.any? do |a|
       case result = try(a).regparse(state)
-      when Result::Success, Result::Valid, Result::Accepted then return result
+      when Result::Success, Result::Valid then return result
+      when Result::Accepted then accepted ||= result; false
       else false
       end
-    end or Result::Invalid.new
+    end or accepted or Result::Invalid.new
   end
 end
 end
