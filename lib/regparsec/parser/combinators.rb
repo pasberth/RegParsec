@@ -28,6 +28,7 @@ class TryParser < Base
       state.commit!
       result
     else
+      state.commit! commit
       result
     end
   end

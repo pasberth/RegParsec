@@ -63,6 +63,7 @@ class RegParsec::Regparsers::RegexpParser < RegParsec::Regparsers::Base
         Result::Success.new( :return_value => md,
                              :matching_string => md[0] )
       else
+        state.input.sub!(md[0], '')
         Result::Valid.new( :return_value => md,
                               :matching_string => md[0] )
       end
