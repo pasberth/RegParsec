@@ -22,12 +22,13 @@ module RegParsec::Regparsers
 class TryParser < Base
   
   def __regparse__ state, doing
-    state.commit!
+    commit = state.commit!
     case result = doing.regparse(state)
     when Result::Success
+      state.commit!
       result
     else
-      state.backdate!
+      state.commit! commit
       result
     end
   end
@@ -38,20 +39,17 @@ class ApplyParser < Base
   def __regparse__ state, *regparsers
     consumed = ''
     list = []
-    state.commit!
     regparsers.each do |regp|
       result = regp.regparse(state)
       case result
-      when Result::Success
+      when Result::Success, Result::Valid
         consumed << result.matching_string
         list << result.return_value
       when Result::Accepted
         consumed << result.matching_string
         list << result.return_value
-        state.backdate!
         return Result::Accepted.new( :return_value => list, :matching_string => consumed )
       when Result::Invalid
-        state.backdate!
         return Result::Invalid.new
       end
     end
@@ -67,7 +65,7 @@ class ManyParser < Base
     list = [].tap do |list|
       while result = try(doing).regparse(state)
         case result
-        when Result::Success then 
+        when Result::Success, Result::Valid then 
           consumed << result.matching_string
           list << result.return_value
         when Result::Accepted then
@@ -88,7 +86,7 @@ class Many1Parser < Base
   
   def __regparse__ state, doing
     case result = many(doing).regparse(state)
-    when Result::Success
+    when Result::Success, Result::Valid
       if result.return_value.empty?
         Result::Invalid.new
       else
@@ -106,6 +104,8 @@ class BetweenParser < Base
     case result = apply(open, body, close).regparse(state)
     when Result::Success
       Result::Success.new( :return_value => result.return_value[1], :matching_string => result.matching_string )
+    when Result::Valid
+      Result::Valid.new( :return_value => result.return_value[1], :matching_string => result.matching_string )
     when Result::Accepted
       Result::Accepted.new( :return_value => result.return_value[1], :matching_string => result.matching_string )
     else
@@ -119,11 +119,10 @@ class OneOfParser < Base
   def __regparse__ state, *choices
     choices.any? do |a|
       case result = try(a).regparse(state)
-      when Result::Success, Result::Accepted then return result
-    # when Result::Accepted then true
+      when Result::Success, Result::Valid, Result::Accepted then return result
       else false
       end
-    end or Invalid.new
+    end or Result::Invalid.new
   end
 end
 end

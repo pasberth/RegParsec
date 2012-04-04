@@ -25,7 +25,7 @@ module RegParsec::Regparseable
 
   def __parse__ state, *args
     case result = regparse(state)
-    when ::RegParsec::Result::Success
+    when ::RegParsec::Result::Success, ::RegParsec::Result::Valid
       result.return_value
     else
       nil
