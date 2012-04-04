@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "result hook" do
-  subject { ::RegParsec::Regparsers.apply("abc", "def") { |list, state| list.join ', ' } }
+  subject { ::RegParsec::Regparsers.apply("abc", "def") { |list| list.join ', ' } }
 
   example { subject.parse("abc").should == nil }
   example { subject.regparse("abc").should == ::RegParsec::Result::Accepted.new( :return_value => ["abc", ""], :matching_string => "abc" ) }

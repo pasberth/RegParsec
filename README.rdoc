@@ -23,6 +23,6 @@ This be development version yet.
 
 == Result hook
 
-  StringParser = RegParsec::Regparsers.between('"', '"', /(?:(?:\\\")|[^"])*/) { |match_data, state| "Result: " + match_data[0] }
+  StringParser = RegParsec::Regparsers.between('"', '"', /(?:(?:\\\")|[^"])*/) { |match_data| "Result: " + match_data[0] }
   StringParser.parse('"Success!"')
   # => "Result: Success!" 
