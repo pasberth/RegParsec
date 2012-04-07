@@ -62,12 +62,14 @@ class ManyParser < Base
   
   def __regparse__ state, doing
     consumed = ''
+    valid = false
     list = [].tap do |list|
       while result = try(doing).regparse(state)
         case result
         when Result::Success, Result::Valid then 
           consumed << result.matching_string
           list << result.return_value
+          valid = result.is_a? Result::Valid
         when Result::Accepted then
           return Result::Valid.new( :return_value => list, :matching_string => consumed )
         when Result::Invalid then
@@ -76,7 +78,9 @@ class ManyParser < Base
       end
     end
 
-    Result::Success.new( :return_value => list , :matching_string => consumed )
+    valid ?
+      Result::Valid.new( :return_value => list , :matching_string => consumed ) :
+      Result::Success.new( :return_value => list , :matching_string => consumed )
   end
 end
 
