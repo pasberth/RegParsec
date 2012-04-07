@@ -39,12 +39,14 @@ class ApplyParser < Base
   def __regparse__ state, *regparsers
     consumed = ''
     list = []
+    valid = false
     regparsers.each do |regp|
       result = regp.regparse(state)
       case result
       when Result::Success, Result::Valid
         consumed << result.matching_string
         list << result.return_value
+        valid = result.is_a? Result::Valid
       when Result::Accepted
         consumed << result.matching_string
         list << result.return_value
@@ -54,7 +56,9 @@ class ApplyParser < Base
       end
     end
     
-    Result::Success.new( :return_value => list, :matching_string => consumed )
+    valid ?
+      Result::Valid.new( :return_value => list , :matching_string => consumed ) :
+      Result::Success.new( :return_value => list , :matching_string => consumed )
   end
 end
 
