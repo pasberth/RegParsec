@@ -95,11 +95,11 @@ class Many1Parser < Base
     when Result::Invalid then head
     when Result::Accepted then head
     when Result::Success, Result::Valid
-      case result = many(doing).regparse(state)
-      when Result::Success
-        Result::Success.new( :return_value => [head.return_value, *result.return_value], :matching_string => head.matching_string + result.matching_string )
-      when Result::Valid
+      result = many(doing).regparse(state)
+      if result.return_value.empty? and head.is_a? Result::Valid or result.is_a? Result::Valid then
         Result::Valid.new( :return_value => [head.return_value, *result.return_value], :matching_string => head.matching_string + result.matching_string )
+      elsif result.is_a? Result::Success then
+        Result::Success.new( :return_value => [head.return_value, *result.return_value], :matching_string => head.matching_string + result.matching_string )
     # when Result::Accepted
     # when Result::Invalid
       end
