@@ -23,18 +23,19 @@ class RegParsec::Regparser
       state.commit!
       while line = input.gets or !state.input.empty?
         state.input << line if line
+        commit = state.commit!
         case result = @regparser.regparse(state)
         when Result::Success then
           state.commit!
           consumed << result.matching_string
           list << result.return_value
         when Result::Valid
-          next if line
+          (state.commit!(commit); next) if line
           state.commit!
           consumed << result.matching_string
           list << result.return_value
-        when Result::Accepted then line ? next : break
-        when Result::Invalid then break
+        when Result::Accepted then line ? (state.commit!(commit); next) : break
+        when Result::Invalid then state.commit!(commit); break
         end
       end
     end
