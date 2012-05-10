@@ -2,6 +2,8 @@ require 'regparsec/regparsers'
 
 class String
   
+  # Convert a string into a RegParser.
+  # see also RegParsec::RegParsers::StringParser
   def to_regparser
     ::RegParsec::Regparsers::StringParser.well_defined_parser_get(self)
   end
@@ -9,6 +11,8 @@ end
 
 class Regexp
   
+  # Convert a regexp into a RegParser.
+  # see also RegParsec::RegParsers::RegexpParser
   def to_regparser
     ::RegParsec::Regparsers::RegexpParser.well_defined_parser_get(self)
   end
@@ -16,6 +20,8 @@ end
 
 class Proc
   
+  # Convert a proc into a RegParser.
+  # see also RegParsec::RegParsers::ProcParser
   def to_regparser
     ::RegParsec::Regparsers::ProcParser.new.curry!(self)
   end
@@ -78,6 +84,23 @@ class RegParsec::Regparsers::RegexpParser < RegParsec::Regparsers::Base
   end
 end
 
+# Lambda that will lazy create a RegParser just in run time.
+#
+#   Expression = one_of(
+#     AssignmentExpression,
+#     apply(proc { Expression }, ',', AssignmentExpression)
+#   )
+#
+# only argument is a now state.
+#
+#   TypeSpecifier = apply(->(state) { one_of(*state.type_specifiers) })
+#   TypeSpecifier.parse(input: "int x = 0;", type_specifiers: %w[void char int])
+#   # => ["int"]
+#   TypeSpecifier.parse(input: "float x = 0;", type_specifiers: %w[void char int])
+#   # => nil
+#   TypeSpecifier.parse(input: "float x = 0;", type_specifiers: %w[void char int float])
+#   # => ["float"]
+#
 class RegParsec::Regparsers::ProcParser < RegParsec::Regparsers::Base
   
   def format_args proc, *args
