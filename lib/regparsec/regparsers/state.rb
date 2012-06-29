@@ -39,7 +39,16 @@ class RegParsec::Regparsers::LazyParser < RegParsec::Regparsers::Base
   end
 
   def __regparse__ state, proc
-    try_convert_into_regparser!( proc.call(state) ).regparse( state )
+    state.commit!
+    regp = try_convert_into_regparser!( proc.call(state) )
+    case result = try(regp).regparse( state )
+    when Result::Success, Result::Valid
+      state.commit!
+      result
+    else
+      state.backdate!
+      result
+    end
   end
 end
 

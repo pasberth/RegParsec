@@ -22,13 +22,13 @@ module RegParsec::Regparsers
 class TryParser < Base
   
   def __regparse__ state, doing
-    commit = state.commit!
+    state.commit!
     case result = doing.regparse(state)
     when Result::Success, Result::Valid
       state.commit!
       result
     else
-      state.commit! commit
+      state.backdate!
       result
     end
   end
