@@ -12,7 +12,7 @@ module RegParsec
   end
 end
 
-require 'regparsec/parser/base'
-require 'regparsec/parser/state'
-require 'regparsec/parser/primary_parsers'
-require 'regparsec/parser/combinators'
+require 'regparsec/regparsers/base'
+require 'regparsec/regparsers/state'
+require 'regparsec/regparsers/primary_parsers'
+require 'regparsec/regparsers/combinators'
