@@ -15,6 +15,7 @@ module RegParsec::Regparseable
     case result
     when ::RegParsec::Result::Success, ::RegParsec::Result::Valid
       result.return_value = result_hooks.inject(result.return_value) { |r, hook| hook.call(r) }
+      update_procs.each { |proc| proc.call(state, result.return_value) }
     end
     result
   end
@@ -36,6 +37,15 @@ module RegParsec::Regparseable
     args.map &:try_convert_into_regparser!.in(::RegParsec::RegparserHelpers)
   end
   
+  def update &block
+    clone.update! &block
+  end
+
+  def update! &block
+    update_procs << block || raise(ArgumentError, "tried to update states without a block.")
+    self
+  end
+
   def result_hook &block
     clone.result_hook! &block
   end
@@ -74,6 +84,14 @@ module RegParsec::Regparseable
 
     def curried_args
       @_curried_args ||= []
+    end
+
+    def update_procs= a
+      @_update_procs = a
+    end
+
+    def update_procs
+      @_update_procs ||= []
     end
   
     def result_hooks= a

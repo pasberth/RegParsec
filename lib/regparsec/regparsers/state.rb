@@ -3,7 +3,7 @@ require 'regparsec/regparsers'
 module RegParsec::Regparsers
 
   [ [:lazy, :LazyParser],
-    [:update, :UpdateParser],
+    # [:update, :UpdateParser],
   ].each do |method, klass|
     module_eval(<<-DEF)
       def #{method}(*args, &block)
@@ -63,3 +63,4 @@ class RegParsec::Regparsers::UpdateParser < RegParsec::Regparsers::Base
     Result::Success.new(:return_value => nil, :matching_string => '')
   end
 end
+

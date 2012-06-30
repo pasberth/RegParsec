@@ -36,4 +36,28 @@ describe do
     state.input.should == "A"
     state.is_upper.should be_true
   end
+
+  example do
+
+    mark = try(/[*+"']/, &:to_s)
+    start_mark = mark.update { |s, mark| s.mark = mark }
+    end_mark = lazy(&:mark).update { |s, mark| s.mark = nil }
+    word = try(/\w*/, &:to_s)
+
+    parser = try between(
+      start_mark,
+      end_mark,
+      word)
+
+    state = ::RegParsec::StateAttributes.new(:input => "*word*", :mark => nil)
+
+    parser.parse(state).should == 'word'
+    state.mark.should be_nil
+    state.input.should == ''
+
+    state = ::RegParsec::StateAttributes.new(:input => "_word_", :mark => nil)
+    parser.parse(state).should be_nil
+    state.mark.should be_nil
+    state.input.should == '_word_'
+  end
 end

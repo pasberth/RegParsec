@@ -8,10 +8,9 @@ p StringParser.parse('"can escape the \" !"')
 # => #<MatchData "can escape the \\\" !"> 
 
 QuoteParser = RegParsec::Regparsers.instance_eval do
-  between( apply( 'q',
-                  update do |state|
-                    state.quotation_mark = apply(/./, &:join).parse(state)
-                  end ),
+  between( apply( 'q', /./ ).update do
+             |s, (q, m)| s.quotation_mark = m.to_s
+           end,
            lazy(&:quotation_mark),
            lazy do |state|
              q = Regexp.quote( state.quotation_mark )  # "\"" => "\\\""
