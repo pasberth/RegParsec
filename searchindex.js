@@ -1,0 +1,1 @@
+Search.setIndex({objects:{},terms:{index:0,search:0,"\u4eca\u5ea6\u66f8\u304f":0,welcom:0,modul:0,regparsec:0,indic:0,content:0,tabl:0,document:0,todo:0,page:0},objtypes:{},titles:["Welcome to RegParsec&#8217;s documentation!"],objnames:{},filenames:["index"]})
